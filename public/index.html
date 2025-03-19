@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1 id="gamen">Game 1/10</h1>
+    <h1 id="points">0</h1>
+    <div id="container" class="container">
+        <table>
+            <tr>
+                <th id="1">1</th>
+                <th id="2">2</th>
+                <th id="3">3</th>
+                <th id="4">4</th>
+            </tr>
+        
+            <tr>
+                <th id="5">5</th>
+                <th id="6">6</th>
+                <th id="7">7</th>
+                <th id="8">8</th>
+            </tr>
+        
+            <tr>
+                <th id="9">9</th>
+                <th id="10">10</th>
+                <th id="11">11</th>
+                <th id="12">12</th>
+            </tr>
+        
+            <tr>
+                <th id="13">13</th>
+                <th id="14">14</th>
+                <th id="15">15</th>
+                <th id="16">16</th>
+            </tr>
+        </table>
+    </div>
+
+    <input type="text" id="imageGuess" placeholder="Enter image filename">
+    <button id="checkGuess">Submit</button>
+
+    <h1 id="wl">.</h1>
+
+    <h1 id="leaderboardSign" style="display: none;">Game Over!</h1>
+    
+    <!-- Username Form -->
+    <div id="usernameForm" style="display: none;">
+        <input type="text" id="usernameInput" placeholder="Enter your username">
+        <button id="submitUsername">Submit</button>
+    </div>
+
+    <!-- Leaderboard always visible -->
+    <div id="leaderboard">
+        <ul id="leaderboardList"></ul>
+    </div>
+
+    <script src="app.js"></script>
+
+    <script>
+        // When the game ends, prompt user for username and show leaderboard
+        function gameEnded() {
+            console.error("Game ended");
+
+            document.getElementById('container').style.display = 'none';
+            document.getElementById('points').style.display = 'none';
+            document.getElementById('gamen').style.display = 'none';
+            document.getElementById('imageGuess').style.display = 'none';
+            document.getElementById('checkGuess').style.display = 'none';
+            document.getElementById('wl').style.display = 'none';
+
+            document.getElementById('leaderboardSign').style.display = 'block';
+            document.getElementById('usernameForm').style.display = 'block';
+
+            // Fetch leaderboard after game ends
+            fetchLeaderboard();
+        }
+
+        // Fetch leaderboard from the server
+        function fetchLeaderboard() {
+            fetch('http://localhost:3000/leaderboard')
+                .then(response => response.json()) // Parse the JSON response
+                .then(data => {
+                    // Assuming `data` is an array of leaderboard entries
+                    let leaderboardHtml = "<h2>Leaderboard</h2><ul>";
+                    
+                    data.forEach(player => {
+                        leaderboardHtml += `<li>${player.username}: ${player.score} points</li>`;
+                    });
+                    
+                    leaderboardHtml += "</ul>";
+                    
+                    // Update leaderboard on the page
+                    document.getElementById("leaderboardList").innerHTML = leaderboardHtml;
+                })
+                .catch(error => console.error("Error fetching leaderboard:", error));
+        }
+
+        // Periodically fetch leaderboard every 5 seconds while the game is running
+        setInterval(fetchLeaderboard, 5000); // Fetch leaderboard every 5 seconds
+
+        // Submit username and score to the server
+        document.getElementById('submitUsername').addEventListener('click', function() {
+            const username = document.getElementById('usernameInput').value;
+            const score = document.getElementById('points').innerText;
+            
+            if (username) {
+                fetch('/submit-score', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, score })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById('usernameForm').style.display = 'none';
+                    fetchLeaderboard();
+                });
+            } else {
+                alert('Please enter a username!');
+            }
+        });
+    </script>
+</body>
+</html>

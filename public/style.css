@@ -1,0 +1,33 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Ensures full viewport height */
+    margin: 0;
+    flex-direction: column;
+}
+
+.container {
+    background-color: red;
+    width: 500px;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+table {
+    width: 100%; /* Makes the table stretch inside the container */
+    height: 100%;
+    border-collapse: collapse; /* Removes double borders */
+}
+
+th {
+    background-color: blue;
+    border: 1px solid black;
+    width: 25%;
+    height: 25%;
+    text-align: center;
+    color: white; /* Optional: makes text readable */
+    cursor: pointer;
+}
