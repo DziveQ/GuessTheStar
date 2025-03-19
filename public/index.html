@@ -82,7 +82,7 @@
 
         // Fetch leaderboard from the server
         function fetchLeaderboard() {
-            fetch('http://localhost:3000/leaderboard')
+            fetch('https://guessthestar.onrender.com/leaderboard')
                 .then(response => response.json()) // Parse the JSON response
                 .then(data => {
                     // Assuming `data` is an array of leaderboard entries
